@@ -10,5 +10,4 @@ public class PearArtApplication {
 		SpringApplication.run(PearArtApplication.class, args);
 		System.out.println("Hello, Pear Art!");
 	}
-
 }
