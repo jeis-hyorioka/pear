@@ -1,6 +1,7 @@
 package com.pear.hyorioka.pear_art.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ public class PairingController {
         List<Player> unassignedPlayers = players.stream()
                                                 .filter(player -> !player.isAssigned())
                                                 .collect(Collectors.toList());
+        Collections.shuffle(unassignedPlayers);
         int roomIndex = 0;
         for (Player player : unassignedPlayers) {
             rooms.get(roomIndex).getAssignedPlayers().add(player);
