@@ -32,6 +32,13 @@ export default function MainPage(){
     });
   };
 
+  const assignPlayer = (roomId: string, playerId: string): void => {
+    console.log("roomid: " + roomId + " playerId: " + playerId);
+    axios.put(baseUrl + '/api/rooms/' + roomId + '/assign/' + playerId ).then(response => {
+      setRooms(response.data);
+    });
+  }
+
   // Shuffleボタン押下
   const shufflePlayers = () => {
     axios.post(baseUrl + '/api/shuffle').then(response => {
@@ -44,7 +51,9 @@ export default function MainPage(){
         <div>
         <h2>Players</h2>
         {players.map((player, i) => (
+          <div>
             <p key={player.id}>{player.name}</p>
+          </div>
         ))}
                 <button onClick={() => addPlayer(prompt('Enter Player Nickname:') || '')}>
           プレイヤー追加
@@ -53,10 +62,21 @@ export default function MainPage(){
         <div>
         <h2>Rooms</h2>
         {rooms.map(room => (
-          <div key={room.name}>
+          <div key={room.id}>
             <h3>{room.name}</h3>
-            {room.assignedPlayers.map((room , index) => (
-              <p key={room.id}>{room.name}</p>
+            {room.assignedPlayers.map((player) => (
+              <div>
+              <p key={player.id}>{player.name}</p>
+              <select value={room.id} onChange={(e) => {
+                console.log(e.target.value)
+                assignPlayer(e.target.value ?? "", player.id!)
+                }}>
+              <option value="">no asigne</option>
+              {rooms.map(availableRoom => (
+                <option key={availableRoom.id} value={availableRoom.id}>{availableRoom.name}</option>
+              ))}
+            </select>
+            </div>
             ))}
           </div>
         ))}
