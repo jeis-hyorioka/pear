@@ -39,6 +39,13 @@ export default function MainPage(){
     });
   }
 
+  const unassignPlayer = (playerId: string): void => {
+    console.log("アサイン外すよ！！");
+    axios.put(baseUrl + '/api/rooms/unassign/' + playerId).then(response => {
+      setRooms(response.data);
+    }) 
+  }
+
   // Shuffleボタン押下
   const shufflePlayers = () => {
     axios.post(baseUrl + '/api/shuffle').then(response => {
@@ -65,11 +72,15 @@ export default function MainPage(){
           <div key={room.id}>
             <h3>{room.name}</h3>
             {room.assignedPlayers.map((player) => (
-              <div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
               <p key={player.id}>{player.name}</p>
               <select value={room.id} onChange={(e) => {
                 console.log(e.target.value)
-                assignPlayer(e.target.value ?? "", player.id!)
+                if(e.target.value != ""){
+                  assignPlayer(e.target.value ?? "", player.id!)
+                }else{
+                  unassignPlayer(player.id!)
+                }
                 }}>
               <option value="">no asigne</option>
               {rooms.map(availableRoom => (
