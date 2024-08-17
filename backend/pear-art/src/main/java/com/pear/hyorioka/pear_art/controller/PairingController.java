@@ -34,10 +34,8 @@ public class PairingController {
 
     @PutMapping("/rooms/{roomId}/assign/{playerId}")
     public ResponseEntity<List<Room>> assignPlayer(@PathVariable("roomId") String roomId, @PathVariable("playerId") String playerId) {
-        System.out.println("roomId: " + roomId + ", playerId: " + playerId);
         for (Player player : players) {
             if (player.getId().equals(playerId)) {
-                System.out.println("プレイヤー発見！　playerId: " + playerId);
                 unassignPlayerByPlayerId(player.getId());
                 for (Room room : rooms) {
                     if (room.getId().equals(roomId)) {
@@ -54,7 +52,6 @@ public class PairingController {
 
     @PutMapping("/rooms/unassign/{playerId}")
     public ResponseEntity<List<Room>> unassignPlayer(@PathVariable("playerId") String playerId) {
-        System.out.println("アサイン外すよ！！　playerId: " + playerId);
         for (Player player : players) {
             if (player.getId().equals(playerId)) {
                 unassignPlayerByPlayerId(player.getId());
@@ -86,20 +83,16 @@ public class PairingController {
     }
 
     private void unassignPlayerByPlayerId(String playerId) {
-        System.out.println("削除するplayerId :" + playerId);
         for (Room room : this.rooms) {
             Optional<Player> player = room.findPlayerById(playerId);
-            System.out.println("playerいた？:" +player.isPresent());
             player.ifPresent(p -> {
             p.setAssigned(false);
             List<Player> assignedPlayers = room.getAssignedPlayers();
-            System.out.println("動いてる？");
             System.out.println(assignedPlayers);
             assignedPlayers.remove(p);
             System.out.println(assignedPlayers);
         });
         }
-        System.out.println("現在のRooms");
         System.out.println(this.rooms);
     }
 }

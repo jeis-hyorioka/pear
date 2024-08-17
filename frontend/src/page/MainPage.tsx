@@ -33,14 +33,12 @@ export default function MainPage(){
   };
 
   const assignPlayer = (roomId: string, playerId: string): void => {
-    console.log("roomid: " + roomId + " playerId: " + playerId);
     axios.put(baseUrl + '/api/rooms/' + roomId + '/assign/' + playerId ).then(response => {
       setRooms(response.data);
     });
   }
 
   const unassignPlayer = (playerId: string): void => {
-    console.log("アサイン外すよ！！");
     axios.put(baseUrl + '/api/rooms/unassign/' + playerId).then(response => {
       setRooms(response.data);
     }) 
@@ -75,7 +73,6 @@ export default function MainPage(){
               <div style={{ display: 'flex', alignItems: 'center' }}>
               <p key={player.id}>{player.name}</p>
               <select value={room.id} onChange={(e) => {
-                console.log(e.target.value)
                 if(e.target.value != ""){
                   assignPlayer(e.target.value ?? "", player.id!)
                 }else{
