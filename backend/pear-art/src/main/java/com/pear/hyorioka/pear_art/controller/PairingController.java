@@ -57,7 +57,6 @@ public class PairingController {
                 unassignPlayerByPlayerId(player.getId());
             }
         }
-        System.out.println(rooms);
         return ResponseEntity.ok(rooms);
     }
     
@@ -103,11 +102,8 @@ public class PairingController {
             player.ifPresent(p -> {
             p.setAssigned(false);
             List<Player> assignedPlayers = room.getAssignedPlayers();
-            System.out.println(assignedPlayers);
             assignedPlayers.remove(p);
-            System.out.println(assignedPlayers);
         });
         }
-        System.out.println(this.rooms);
     }
 }
