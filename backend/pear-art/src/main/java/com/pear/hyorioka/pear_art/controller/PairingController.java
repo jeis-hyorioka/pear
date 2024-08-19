@@ -3,6 +3,7 @@ package com.pear.hyorioka.pear_art.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,16 +28,15 @@ public class PairingController {
 
     @PostMapping("/players")
     public ResponseEntity<List<Player>> addPlayer(@RequestBody String nickNamesString) {
-        players.add(new Player(nickNamesString)) ;       
+        players.add(new Player(nickNamesString));       
         return ResponseEntity.ok(players);
     }
 
-    // TODO: roomにアサインする時、既存のroomにアサインされたplayerを削除する
     @PutMapping("/rooms/{roomId}/assign/{playerId}")
     public ResponseEntity<List<Room>> assignPlayer(@PathVariable("roomId") String roomId, @PathVariable("playerId") String playerId) {
-        System.out.println("roomId: " + roomId + ", playerId: " + playerId);
         for (Player player : players) {
             if (player.getId().equals(playerId)) {
+                unassignPlayerByPlayerId(player.getId());
                 for (Room room : rooms) {
                     if (room.getId().equals(roomId)) {
                         room.getAssignedPlayers().add(player);
@@ -47,6 +47,17 @@ public class PairingController {
                 break;
             }
         }
+        return ResponseEntity.ok(rooms);
+    }
+
+    @PutMapping("/rooms/unassign/{playerId}")
+    public ResponseEntity<List<Room>> unassignPlayer(@PathVariable("playerId") String playerId) {
+        for (Player player : players) {
+            if (player.getId().equals(playerId)) {
+                unassignPlayerByPlayerId(player.getId());
+            }
+        }
+        System.out.println(rooms);
         return ResponseEntity.ok(rooms);
     }
     
@@ -70,6 +81,18 @@ public class PairingController {
         }
         return ResponseEntity.ok(rooms);
     }
-    
-    
+
+    private void unassignPlayerByPlayerId(String playerId) {
+        for (Room room : this.rooms) {
+            Optional<Player> player = room.findPlayerById(playerId);
+            player.ifPresent(p -> {
+            p.setAssigned(false);
+            List<Player> assignedPlayers = room.getAssignedPlayers();
+            System.out.println(assignedPlayers);
+            assignedPlayers.remove(p);
+            System.out.println(assignedPlayers);
+        });
+        }
+        System.out.println(this.rooms);
+    }
 }

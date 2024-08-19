@@ -2,6 +2,7 @@ package com.pear.hyorioka.pear_art.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -16,5 +17,14 @@ public class Room {
 
     public Room(String name) {
         this.name = name;
+    }
+
+    public Optional<Player> findPlayerById(String playerId) {
+        for(Player player : assignedPlayers) {
+            if (player.getId().equals(playerId)) {
+                return Optional.of(player);
+            }
+        }
+        return Optional.empty();
     }
 }
