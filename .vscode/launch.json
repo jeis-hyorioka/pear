@@ -3,7 +3,7 @@
 
         {
             "type": "node-terminal",
-            "name": "スクリプトの実行: dev",
+            "name": "react",
             "request": "launch",
             "command": "npm run dev",
             "cwd": "${workspaceFolder}/frontend"

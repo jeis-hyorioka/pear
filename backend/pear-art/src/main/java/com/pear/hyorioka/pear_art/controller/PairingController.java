@@ -73,12 +73,27 @@ public class PairingController {
                                                 .filter(player -> !player.isAssigned())
                                                 .collect(Collectors.toList());
         Collections.shuffle(unassignedPlayers);
+
+        int totalPlayers = players.size();
+        int roomCount = rooms.size();
+        int playersPerRoom = totalPlayers / roomCount;
+
+        for (Room room: rooms) {
+            while (room.getAssignedPlayers().size() < playersPerRoom && !unassignedPlayers.isEmpty()) {
+                Player player = unassignedPlayers.remove(0);
+                room.getAssignedPlayers().add(player);
+                player.setAssigned(true);
+            }
+        }
+
         int roomIndex = 0;
-        for (Player player : unassignedPlayers) {
+        while (!unassignedPlayers.isEmpty()) {
+            Player player = unassignedPlayers.remove(0);
             rooms.get(roomIndex).getAssignedPlayers().add(player);
             player.setAssigned(true);
-            roomIndex = (roomIndex + 1) % rooms.size();
+            roomIndex = (roomIndex + 1) % roomCount;
         }
+
         return ResponseEntity.ok(rooms);
     }
 
