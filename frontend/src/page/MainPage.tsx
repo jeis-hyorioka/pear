@@ -1,36 +1,37 @@
 import axios from "axios";
 import { useState } from "react";
+import { Player } from "../types/player";
+import { Room } from "../types/room";
+import PlayerPanel from "../component/playerPanel";
 
 export default function MainPage(){
   const baseUrl: string = "http://localhost:8080"
-    interface Player {
-        id?: string;
-        name: string;
-        isAssigned: boolean;
-      }
-      
-      interface Room {
-        id?: string;
-        name: string;
-        assignedPlayers: Player[];
-      }
 
       const [players, setPlayers] = useState<Player[]>([]);
       const [rooms, setRooms] = useState<Room[]>([]);
 
         // プレイヤー追加
-  const addPlayer = (nickname: string) => {
-    axios.post(baseUrl + '/api/players', { nickname }).then(response => {
+  const addPlayer = (name: string) => {
+    axios.post(baseUrl + '/api/players', { name }).then(response => {
       setPlayers(response.data);
     });
   };
 
   // Room作成
-  const addRoom = (roomName: string) => {
-    axios.post(baseUrl + '/api/rooms', { roomName }).then(response => {
+  const addRoom = (name: string) => {
+    axios.post(baseUrl + '/api/rooms', { name }).then(response => {
       setRooms(response.data);
     });
   };
+
+  const managePlayerAssignment = (roomId: string, playerId: string): void => {
+    if(roomId === ""){
+      unassignPlayer(playerId);
+    }
+    else{
+      assignPlayer(roomId, playerId);
+    }
+  }
 
   const assignPlayer = (roomId: string, playerId: string): void => {
     axios.put(baseUrl + '/api/rooms/' + roomId + '/assign/' + playerId ).then(response => {
@@ -52,9 +53,9 @@ export default function MainPage(){
   };
 
       return <>
-        <h1>Pear</h1>
+        <h1 className="mb-4 text-5xl font-extrabold">Pear</h1>
         <div>
-        <h2>Players</h2>
+        <h2 className="mb-4 text-4xl font-extrabold">Players</h2>
         {players.map((player, i) => (
           <div>
             <p key={player.id}>{player.name}</p>
@@ -64,34 +65,22 @@ export default function MainPage(){
           プレイヤー追加
         </button>
         </div>
-        <div>
-        <h2>Rooms</h2>
+        <h2 className="mb-4 text-4xl font-extrabold">Rooms</h2>
+
+        <div className="flex">
         {rooms.map(room => (
-          <div key={room.id}>
+          <div key={room.id} className="mr-4 rounded bg-teal-300">
             <h3>{room.name}</h3>
             {room.assignedPlayers.map((player) => (
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-              <p key={player.id}>{player.name}</p>
-              <select value={room.id} onChange={(e) => {
-                if(e.target.value != ""){
-                  assignPlayer(e.target.value ?? "", player.id!)
-                }else{
-                  unassignPlayer(player.id!)
-                }
-                }}>
-              <option value="">no asigne</option>
-              {rooms.map(availableRoom => (
-                <option key={availableRoom.id} value={availableRoom.id}>{availableRoom.name}</option>
-              ))}
-            </select>
-            </div>
+              <PlayerPanel player={player} rooms={rooms} selectedRoom={room} onChangeRoom={managePlayerAssignment}/>
             ))}
           </div>
         ))}
-        <button onClick={() => addRoom(prompt('Enter Room Name:') || '')}>
+
+      </div>
+      <button onClick={() => addRoom(prompt('Enter Room Name:') || '')}>
           Room作成
         </button>
-      </div>
 
       <button onClick={shufflePlayers}>Shuffle</button>
       </>
