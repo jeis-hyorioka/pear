@@ -10,14 +10,12 @@ export default function MainPage(){
       const [players, setPlayers] = useState<Player[]>([]);
       const [rooms, setRooms] = useState<Room[]>([]);
 
-        // プレイヤー追加
   const addPlayer = (name: string) => {
     axios.post(baseUrl + '/api/players', { name }).then(response => {
       setPlayers(response.data);
     });
   };
 
-  // Room作成
   const addRoom = (name: string) => {
     axios.post(baseUrl + '/api/rooms', { name }).then(response => {
       setRooms(response.data);
@@ -54,7 +52,8 @@ export default function MainPage(){
 
       return <>
         <h1 className="mb-4 text-5xl font-extrabold">Pear</h1>
-        <div>
+        <div className="flex">
+          <div>
         <h2 className="mb-4 text-4xl font-extrabold">Players</h2>
         {players.map((player, i) => (
           <div>
@@ -65,12 +64,12 @@ export default function MainPage(){
           プレイヤー追加
         </button>
         </div>
+        <div>
         <h2 className="mb-4 text-4xl font-extrabold">Rooms</h2>
-
         <div className="flex">
         {rooms.map(room => (
           <div key={room.id} className="mr-4 rounded bg-teal-300">
-            <h3>{room.name}</h3>
+            <h3 className="text-2xl">{room.name}</h3>
             {room.assignedPlayers.map((player) => (
               <PlayerPanel player={player} rooms={rooms} selectedRoom={room} onChangeRoom={managePlayerAssignment}/>
             ))}
@@ -81,6 +80,9 @@ export default function MainPage(){
       <button onClick={() => addRoom(prompt('Enter Room Name:') || '')}>
           Room作成
         </button>
+      </div>
+      </div>
+
 
       <button onClick={shufflePlayers}>Shuffle</button>
       </>
