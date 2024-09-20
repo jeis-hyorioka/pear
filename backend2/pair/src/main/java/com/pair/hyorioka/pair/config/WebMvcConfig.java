@@ -1,4 +1,4 @@
-package com.pear.hyorioka.pear_art.config;
+package com.pair.hyorioka.pair.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
